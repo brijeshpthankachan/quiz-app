@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import { log } from "console";
 import { NextRequest, NextResponse } from "next/server";
 
