@@ -1,12 +1,22 @@
-import { sql } from "@vercel/postgres";
+import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   try {
-    const result =
-      await sql`CREATE TABLE Pets ( Name varchar(255), Owner varchar(255) );`;
-    return NextResponse.json({ result }, { status: 200 });
+    const { name, phone } = await request.json();
+
+    const newUser = await prisma.user.create({
+      data: {
+        name,
+        phone,
+      },
+    });
+
+    return NextResponse.json(newUser);
   } catch (error) {
-    return NextResponse.json({ error }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to create user" },
+      { status: 500 }
+    );
   }
 }
