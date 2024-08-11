@@ -1,43 +1,43 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { ModeToggle } from "@/components/mode-toggle";
+import { TreePalm } from "lucide-react";
 
 const NavBar = () => {
-  const addUser = () => {
-    fetch("/api/add-user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: "Elliott",
-        phone: 6789785678,
-      }),
-    });
-  };
+  // const addUser = () => {
+  //   fetch("/api/add-user", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       name: "Elliott",
+  //       phone: 6789785678,
+  //     }),
+  //   });
+  // };
 
-  const deleteUser = async () => {
-    await fetch("/api/delete-user", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        number: 6789785678,
-      }),
-    }).catch((er) => console.log(er));
-  };
+  // const deleteUser = async () => {
+  //   await fetch("/api/delete-user", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify({
+  //       number: 6789785678,
+  //     }),
+  //   }).catch((er) => console.log(er));
+  // };
 
   return (
-    <div className="bg-gray-200 flex justify-end px-16 py-2 sticky dark:bg-slate-800 h-16 items-center">
-      <div className="flex gap-2 items-start h-full">
-        {/* <ModeToggle /> */}
-        <Button className="h-full" variant="default" onClick={deleteUser}>
-          Log in
-        </Button>
-        <Button className="h-full" variant="default">
-          Sign up
-        </Button>
+    <div className="bg-gray-200 flex justify-between px-16 dark:bg-slate-900 h-14 align-middle items-center absolute w-full">
+      <div className="flex pl-20 gap-4 items-center">
+        <TreePalm size={28} color="#faf4f4" className="hidden dark:block" />
+        <TreePalm size={28} color="#050505" className="dark:hidden" />
+        <p className="font-bold">Games & Quizzes</p>
+      </div>
+      <div className="flex gap-2 items-start">
+        <ModeToggle />
       </div>
     </div>
   );
