@@ -1,7 +1,7 @@
 import { cva } from "class-variance-authority";
 
 export const timerClass = cva(
-  "flex justify-center items-center w-[50px] h-[50px] rounded-full border-[2px] z-1 bg-white",
+  "flex justify-center items-center w-[50px] h-[50px] rounded-full border-[2px] z-2 bg-white dark:bg-slate-700",
   {
     variants: {
       timer: {

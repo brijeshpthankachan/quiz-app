@@ -17,7 +17,7 @@ const StartPage = (props: StartPageProps) => {
       <div className="absolute mb-[15.5rem] border border-black-900 px-2 py-1 rounded-sm dark:bg-slate-600">
         Geography & Travel
       </div>
-      <Card className="h-[250px] dark:bg-slate-600 w-1/3 p-5">
+      <Card className="h-[250px] dark:bg-slate-600 w-full lg:w-1/3 p-5">
         <CardContent className="font-bold text-4xl capitalize text-center pt-4">
           name that world flag !
         </CardContent>
@@ -46,9 +46,11 @@ const StartPage = (props: StartPageProps) => {
 
 const QuizHeader = () => {
   return (
-    <div className="h-[67px]  overflow-hidden p-2 flex items-center border border-b-blue-100 justify-between px-7">
-      <p className="capitalize font-semibold">name that world flag!</p>
-      <div className="flex items-center gap-3">
+    <div className="h-[67px] overflow-hidden p-2 flex items-center border-b border-b-blue-100 lg:border rounded-sm justify-between md:px-7">
+      <p className="capitalize font-semibold hidden lg:block">
+        name that world flag!
+      </p>
+      <div className="flex items-center gap-3 w-full lg:w-auto justify-between">
         <Timer />
         <p>1 of 35</p>
         <p>Score : 0</p>
@@ -74,14 +76,16 @@ const Timer = () => {
   }, []);
 
   return (
-    <div className="flex items-center ">
+    <div className="flex items-center">
       {timer === 0 ? (
-        <span className="bg-red-700 text-white px-2 rounded-l-xl text-sm -rounded-r-xl -mr-1 h-[20px] z-0 animate-fade-up duration-500">
+        <span className="bg-red-700 order-last lg:order-first w-[100px] text-center text-white px-2 rounded-xl text-sm lg:rounded-r-none -ml-3 lg:-mr-1 lg:ml-0 h-[20px] z-0 animate-fade-up duration-500">
           Time&apos;s up!
         </span>
       ) : null}
       <div
-        className={timerClass({ timer: timer === 0 ? "finished" : "running" })}
+        className={`z-10 ${timerClass({
+          timer: timer === 0 ? "finished" : "running",
+        })}`}
       >
         {timer}
       </div>
@@ -93,10 +97,10 @@ const HomePage = () => {
   const [hasStarted, setHasStarted] = useState(false);
 
   return (
-    <div className="h-full bg-gray-100 dark:bg-slate-700">
+    <div className="h-full bg-gray-100 dark:bg-slate-700 w-full">
       <NavBar />
-      <div className="flex justify-center items-center h-full bg-inherit dark:bg-slate-700">
-        <Card className="w-3/4 h-2/3 dark:bg-slate-800">
+      <div className="flex justify-center lg:items-center pt-16 lg:pt-0 h-full bg-inherit dark:bg-slate-700 w-full">
+        <Card className="lg:shadow-lg w-[100%] md:w-[90%] lg:w-3/4 h-2/3 bg-inherit border-none lg:border-2 border-gray-600 lg:dark:bg-slate-800">
           {hasStarted ? (
             <QuizHeader />
           ) : (
