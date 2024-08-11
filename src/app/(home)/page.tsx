@@ -5,6 +5,7 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import NavBar from "./_components/navbar";
+import Image from "next/image";
 
 type StartPageProps = {
   onQuizStart: Dispatch<SetStateAction<boolean>>;
@@ -43,7 +44,7 @@ const StartPage = (props: StartPageProps) => {
   );
 };
 
-const QuizHeader = () => {
+const QuizHeader = (props : any) => {
   const [timer, setTimer] = useState(10);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -58,6 +59,10 @@ const QuizHeader = () => {
       clearInterval(interval);
     };
   }, []);
+
+  useEffect(()=>{
+    setTimer(10)
+  },[props.flagNo])
   return (
     <div className="h-[67px]  overflow-hidden p-2 flex items-center border border-b-blue-100 justify-between px-7">
       <p className="capitalize font-semibold">name that world flag</p>
@@ -73,8 +78,28 @@ const QuizHeader = () => {
   );
 };
 
+const QuizBody = (props : any) => {
+ 
+  return (
+    <div className=" h-full  rounded-sm flex items-center justify-center flex-col gap-2">
+      <Image
+        alt="image"
+        src={`/images/${props.flags[props.flagNo]}.svg`}
+        width={300}
+        height={300}
+      />
+      <Button onClick={props.changeFlag} disabled={props.flagNo === props.flags.length-1}>Next Image</Button>
+    </div>
+  );
+};
+
 const HomePage = () => {
   const [hasStarted, setHasStarted] = useState(false);
+  const flags = ["afghanistan", "albania", "algeria", "andorra", "angola"];
+  const [flagNo, setFlagNo] = useState(0);
+  const changeFlag = () => {
+    setFlagNo((next) => next + 1);
+  };
 
   return (
     <div className="h-full bg-gray-100 dark:bg-slate-700">
@@ -82,7 +107,10 @@ const HomePage = () => {
       <div className="flex justify-center items-center h-full bg-inherit dark:bg-slate-700">
         <Card className="w-3/4 h-2/3 dark:bg-slate-800">
           {hasStarted ? (
-            <QuizHeader />
+            <>
+              <QuizHeader flagNo={flagNo} />
+              <QuizBody flags={flags} flagNo={flagNo} changeFlag={changeFlag} />
+            </>
           ) : (
             <StartPage onQuizStart={setHasStarted} />
           )}
