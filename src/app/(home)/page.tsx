@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { timerClass } from "@/lib/styles";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import NavBar from "./_components/navbar";
 
@@ -44,6 +45,19 @@ const StartPage = (props: StartPageProps) => {
 };
 
 const QuizHeader = () => {
+  return (
+    <div className="h-[67px]  overflow-hidden p-2 flex items-center border border-b-blue-100 justify-between px-7">
+      <p className="capitalize font-semibold">name that world flag!</p>
+      <div className="flex items-center gap-3">
+        <Timer />
+        <p>1 of 35</p>
+        <p>Score : 0</p>
+      </div>
+    </div>
+  );
+};
+
+const Timer = () => {
   const [timer, setTimer] = useState(10);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -58,16 +72,18 @@ const QuizHeader = () => {
       clearInterval(interval);
     };
   }, []);
+
   return (
-    <div className="h-[67px]  overflow-hidden p-2 flex items-center border border-b-blue-100 justify-between px-7">
-      <p className="capitalize font-semibold">name that world flag</p>
-      <div className="flex items-center gap-3">
-        <span>Time&apos;s up!</span>
-        <div className="flex justify-center items-center  w-[50px] h-[50px]  rounded-full border-[2px] border-blue-100">
-          {timer}
-        </div>
-        <p>1 of 35</p>
-        <p>Score : 0</p>
+    <div className="flex items-center ">
+      {timer === 0 ? (
+        <span className="bg-red-700 text-white px-2 rounded-l-xl text-sm -rounded-r-xl -mr-1 h-[20px] z-0 animate-fade-up duration-500">
+          Time&apos;s up!
+        </span>
+      ) : null}
+      <div
+        className={timerClass({ timer: timer === 0 ? "finished" : "running" })}
+      >
+        {timer}
       </div>
     </div>
   );
