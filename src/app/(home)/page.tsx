@@ -44,7 +44,7 @@ const StartPage = (props: StartPageProps) => {
   );
 };
 
-const QuizHeader = (props : any) => {
+const QuizHeader = (props: any) => {
   const [timer, setTimer] = useState(10);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -60,9 +60,9 @@ const QuizHeader = (props : any) => {
     };
   }, []);
 
-  useEffect(()=>{
-    setTimer(10)
-  },[props.flagNo])
+  useEffect(() => {
+    setTimer(10);
+  }, [props.flagNo]);
   return (
     <div className="h-[67px]  overflow-hidden p-2 flex items-center border border-b-blue-100 justify-between px-7">
       <p className="capitalize font-semibold">name that world flag</p>
@@ -78,24 +78,63 @@ const QuizHeader = (props : any) => {
   );
 };
 
-const QuizBody = (props : any) => {
- 
+const QuizBody = (props: any) => {
   return (
-    <div className=" h-full  rounded-sm flex items-center justify-center flex-col gap-2">
+    <div className="h-full  rounded-sm flex items-center justify-center flex-col gap-2">
       <Image
         alt="image"
-        src={`/images/${props.flags[props.flagNo]}.svg`}
+        src={`/images/${props.flags[props.flagNo].name}.svg`}
         width={300}
         height={300}
       />
-      <Button onClick={props.changeFlag} disabled={props.flagNo === props.flags.length-1}>Next Image</Button>
+      <div className="grid grid-cols-2 gap-4">
+        {props.flags[props.flagNo].options.map(
+          (option: string, index: number) => (
+            <Button
+              className="w-[18rem] border-2 border-green-700 rounded-md"
+              variant={"outline"}
+              key={index}
+            > 
+              {option}
+            </Button>
+          )
+        )}
+      </div>
+
+      <Button
+        onClick={props.changeFlag}
+        disabled={props.flagNo === props.flags.length - 1}
+      >
+        Next Image
+      </Button>
     </div>
   );
 };
 
 const HomePage = () => {
   const [hasStarted, setHasStarted] = useState(false);
-  const flags = ["afghanistan", "albania", "algeria", "andorra", "angola"];
+  const flags: Array<{ name: string; options: Array<string> }> = [
+    {
+      name: "afghanistan",
+      options: ["afghanistan", "albania", "algeria", "andorra"],
+    },
+    {
+      name: "albania",
+      options: ["albania", "afghanistan", "algeria", "andorra"],
+    },
+    {
+      name: "algeria",
+      options: ["albania", "afghanistan", "algeria", "andorra"],
+    },
+    {
+      name: "andorra",
+      options: ["albania", "afghanistan", "algeria", "andorra"],
+    },
+    {
+      name: "angola",
+      options: ["albania", "afghanistan", "algeria", "andorra"],
+    },
+  ];
   const [flagNo, setFlagNo] = useState(0);
   const changeFlag = () => {
     setFlagNo((next) => next + 1);
