@@ -11,6 +11,9 @@ type QuizState = {
   disableNextButton: () => void;
   resetTimer: () => void;
   setMaxIndex: (arg1: number) => void;
+  selectedAnswer: string | null;
+  setSelectedAnswer: (answer: string) => void;
+  resetAnswer: () => void;
 };
 
 export const useQuizStore = create<QuizState>((set) => ({
@@ -19,6 +22,7 @@ export const useQuizStore = create<QuizState>((set) => ({
   maxIndex: 0,
   shouldResetTimer: false,
   isNextButtonDisabled: false,
+  selectedAnswer: null,
 
   startQuiz: () => set({ hasStarted: true }),
   setMaxIndex: (maxIndex: number) => set({ maxIndex: maxIndex }),
@@ -26,11 +30,13 @@ export const useQuizStore = create<QuizState>((set) => ({
     set((state) => ({
       currentIndex: state.currentIndex + 1,
       shouldResetTimer: !state.shouldResetTimer,
-      isNextButtonDisabled: state.currentIndex === state.maxIndex - 2
+      isNextButtonDisabled: state.currentIndex === state.maxIndex - 2,
     })),
 
   disableNextButton: () => set({ isNextButtonDisabled: true }),
 
   resetTimer: () =>
     set((state) => ({ shouldResetTimer: !state.shouldResetTimer })),
+  setSelectedAnswer: (answer: string) => set({ selectedAnswer: answer }),
+  resetAnswer: () => set({ selectedAnswer: null }),
 }));

@@ -8,22 +8,28 @@ import { useQuizStore } from "@/store/quiz-state";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import NavBar from "./_components/navbar";
+import { CircleCheck, CircleX } from "lucide-react";
 
 const flags = [
   {
     country: "afghanistan",
+    answers: ["afghanistan", "albania", "andorra", "angola"],
   },
   {
     country: "albania",
+    answers: ["afghanistan", "albania", "andorra", "angola"],
   },
   {
     country: "algeria",
+    answers: ["afghanistan", "albania", "andorra", "angola"],
   },
   {
     country: "andorra",
+    answers: ["afghanistan", "albania", "andorra", "angola"],
   },
   {
     country: "angola",
+    answers: ["afghanistan", "albania", "andorra", "angola"],
   },
 ];
 
@@ -35,6 +41,7 @@ const StartPage = () => {
       <div className="absolute mb-[15.5rem] border border-black-900 px-2 py-1 rounded-sm dark:bg-slate-600">
         Geography & Travel
       </div>
+
       <Card className="h-[250px] dark:bg-slate-600 w-full lg:w-1/3 p-5">
         <CardContent className="font-bold text-4xl capitalize text-center pt-4">
           name that world flag !
@@ -52,7 +59,6 @@ const StartPage = () => {
           <p className="text-sm">35 Questions</p>
           <div className="flex items-center gap-2">
             <p className="text-sm">Timer bonus</p>
-
             <Switch />
           </div>
         </CardFooter>
@@ -89,7 +95,6 @@ const Timer = () => {
       setTimer((prev) => {
         if (prev === 1) {
           clearInterval(interval);
-          disableNextButton();
         }
         return prev - 1;
       });
@@ -122,7 +127,14 @@ const Timer = () => {
 };
 
 const QuizBody = () => {
-  const { currentIndex, isNextButtonDisabled, nextQuestion } = useQuizStore();
+  const {
+    currentIndex,
+    isNextButtonDisabled,
+    nextQuestion,
+    selectedAnswer,
+    setSelectedAnswer,
+    resetAnswer,
+  } = useQuizStore();
 
   return (
     <div className="w-full h-full rounded-sm flex justify-center items-center">
@@ -135,13 +147,43 @@ const QuizBody = () => {
           className="rounded-sm"
         />
 
-        <Button
-          size="lg"
-          onClick={nextQuestion}
-          disabled={isNextButtonDisabled}
-        >
-          Next -&gt;
-        </Button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          {flags[currentIndex].answers.map((answer) => (
+            <Button
+              key={answer}
+              size="lg"
+              className="border border-green-700 capitalize px-2 relative"
+              onClick={() => {
+                setSelectedAnswer(answer);
+              }}
+            >
+              <span className="text-center w-full">{answer}</span>
+              {selectedAnswer === flags[currentIndex].country &&
+                answer === selectedAnswer && (
+                  <CircleCheck className="absolute right-2" color="green" />
+                )}
+
+              {selectedAnswer !== flags[currentIndex].country &&
+                answer === selectedAnswer && (
+                  <CircleX className="absolute right-2" color="red" />
+                )}
+            </Button>
+          ))}
+        </div>
+
+        {selectedAnswer && (
+          <Button
+            size="lg"
+            onClick={() => {
+              nextQuestion();
+              resetAnswer();
+            }}
+            disabled={isNextButtonDisabled}
+            variant={"secondary"}
+          >
+            Next -&gt;
+          </Button>
+        )}
       </div>
     </div>
   );
