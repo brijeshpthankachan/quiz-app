@@ -6,6 +6,8 @@ import { Switch } from "@/components/ui/switch";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import NavBar from "./_components/navbar";
 import Image from "next/image";
+import { CircleCheck, CircleX } from "lucide-react";
+import { log } from "console";
 
 type StartPageProps = {
   onQuizStart: Dispatch<SetStateAction<boolean>>;
@@ -48,12 +50,7 @@ const QuizHeader = (props: any) => {
   const [timer, setTimer] = useState(10);
   useEffect(() => {
     const interval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev === 1) {
-          clearInterval(interval);
-        }
-        return prev - 1;
-      });
+      setTimer((prev) => (prev === 0 ? prev : prev - 1));
     }, 1000);
     return () => {
       clearInterval(interval);
@@ -79,6 +76,10 @@ const QuizHeader = (props: any) => {
 };
 
 const QuizBody = (props: any) => {
+  const [selected,setSelected] = useState<string|null>(null);
+  console.log(selected);
+  
+
   return (
     <div className="h-full  rounded-sm flex items-center justify-center flex-col gap-2">
       <Image
@@ -91,18 +92,24 @@ const QuizBody = (props: any) => {
         {props.flags[props.flagNo].options.map(
           (option: string, index: number) => (
             <Button
-              className="w-[18rem] border-2 border-green-700 rounded-md"
+              className="w-[18rem] border-2 border-green-700 rounded-md relative"
               variant={"outline"}
               key={index}
-            > 
+              onClick={()=>setSelected(option)}
+            >
               {option}
+              {option === selected && selected === props.flags[props.flagNo].name && <CircleCheck className="absolute right-2" color="green" /> }
+              {option === selected && selected !== props.flags[props.flagNo].name && <CircleX className="absolute right-2" color="red" />}
+              
             </Button>
           )
         )}
       </div>
 
       <Button
-        onClick={props.changeFlag}
+        onClick={()=>{props.changeFlag();
+          setSelected(null)
+        }}
         disabled={props.flagNo === props.flags.length - 1}
       >
         Next Image
@@ -132,7 +139,7 @@ const HomePage = () => {
     },
     {
       name: "angola",
-      options: ["albania", "afghanistan", "algeria", "andorra"],
+      options: ["albania", "angola", "algeria", "andorra"],
     },
   ];
   const [flagNo, setFlagNo] = useState(0);
