@@ -1,19 +1,16 @@
+import { Observable, interval } from "rxjs";
 import { create } from "zustand";
 
 type QuizState = {
   hasStarted: boolean;
   currentIndex: number;
   maxIndex: number;
-  shouldResetTimer: boolean;
-  isNextButtonDisabled: boolean;
   startQuiz: () => void;
   nextQuestion: () => void;
-  disableNextButton: () => void;
-  resetTimer: () => void;
   setMaxIndex: (arg1: number) => void;
   selectedAnswer: string | null;
   setSelectedAnswer: (answer: string) => void;
-  resetAnswer: () => void;
+  pulse: Observable<number>;
 };
 
 export const useQuizStore = create<QuizState>((set) => ({
@@ -21,22 +18,17 @@ export const useQuizStore = create<QuizState>((set) => ({
   currentIndex: 0,
   maxIndex: 0,
   shouldResetTimer: false,
-  isNextButtonDisabled: false,
   selectedAnswer: null,
+  pulse: interval(1000),
 
   startQuiz: () => set({ hasStarted: true }),
   setMaxIndex: (maxIndex: number) => set({ maxIndex: maxIndex }),
   nextQuestion: () =>
     set((state) => ({
       currentIndex: state.currentIndex + 1,
-      shouldResetTimer: !state.shouldResetTimer,
       isNextButtonDisabled: state.currentIndex === state.maxIndex - 2,
+      selectedAnswer: null,
     })),
 
-  disableNextButton: () => set({ isNextButtonDisabled: true }),
-
-  resetTimer: () =>
-    set((state) => ({ shouldResetTimer: !state.shouldResetTimer })),
   setSelectedAnswer: (answer: string) => set({ selectedAnswer: answer }),
-  resetAnswer: () => set({ selectedAnswer: null }),
 }));

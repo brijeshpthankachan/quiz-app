@@ -6,7 +6,7 @@ export const timerClass = cva(
     variants: {
       timer: {
         running:
-          "border-blue-100 animate-pulse animate-infinite animate-duration-1000 animate-ease-in-out",
+          "border-blue-100",
         finished:
           "border-red-700 animate-jump animate-once animate-duration-700 animate-ease-in-out",
       },

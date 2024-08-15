@@ -5,10 +5,14 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { timerClass } from "@/lib/styles";
 import { useQuizStore } from "@/store/quiz-state";
+import { CircleCheck, CircleX } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { interval, Subject, take } from "rxjs";
 import NavBar from "./_components/navbar";
-import { CircleCheck, CircleX } from "lucide-react";
+
+const MAX_TIME = 5;
+const intervelSubject = new Subject();
 
 const flags = [
   {
@@ -21,7 +25,7 @@ const flags = [
   },
   {
     country: "algeria",
-    answers: ["afghanistan", "albania", "andorra", "angola"],
+    answers: ["afghanistan", "albania", "algeria", "angola"],
   },
   {
     country: "andorra",
@@ -87,54 +91,47 @@ const QuizHeader = () => {
 };
 
 const Timer = () => {
-  const { shouldResetTimer, disableNextButton } = useQuizStore();
-  const [timer, setTimer] = useState(10);
-
+  const [timeLeft, setTimeLeft] = useState(MAX_TIME);
+  const store = useQuizStore();
   useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((prev) => {
-        if (prev === 1) {
-          clearInterval(interval);
-        }
-        return prev - 1;
-      });
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
-
-  useEffect(() => {
-    setTimer(10);
-  }, [shouldResetTimer]);
+    const pulse$ = interval(1000)
+    const subscription = pulse$.pipe(take(6)).subscribe((time) => {
+      setTimeLeft(MAX_TIME - time)
+      if (time === MAX_TIME) intervelSubject.next(0);
+    })
+    
+    if(store.selectedAnswer) subscription.unsubscribe()
+    return () => subscription.unsubscribe();
+  }, [store.currentIndex, store.selectedAnswer]);
 
   return (
     <div className="flex items-center">
-      {timer === 0 ? (
+      {timeLeft === 0 ? (
         <span className="bg-red-700 order-last lg:order-first w-[100px] text-center text-white px-2 rounded-xl text-sm lg:rounded-r-none -ml-3 lg:-mr-1 lg:ml-0 h-[20px] z-0 animate-fade-up duration-500">
           Time&apos;s up!
         </span>
       ) : null}
       <div
         className={`z-10 ${timerClass({
-          timer: timer === 0 ? "finished" : "running",
+          timer: timeLeft === 0 ? "finished" : "running",
         })}`}
       >
-        {timer}
+        {timeLeft}
       </div>
     </div>
   );
 };
 
 const QuizBody = () => {
-  const {
-    currentIndex,
-    isNextButtonDisabled,
-    nextQuestion,
-    selectedAnswer,
-    setSelectedAnswer,
-    resetAnswer,
-  } = useQuizStore();
+  const { currentIndex, nextQuestion, selectedAnswer, setSelectedAnswer } =
+    useQuizStore();
+
+  useEffect(() => {
+    const ob = intervelSubject.subscribe(n => {
+      setSelectedAnswer(flags[currentIndex].country)
+    })
+    return ()=> ob.unsubscribe()
+  },[currentIndex])
 
   return (
     <div className="w-full h-full rounded-sm flex justify-center items-center">
@@ -156,6 +153,7 @@ const QuizBody = () => {
               onClick={() => {
                 setSelectedAnswer(answer);
               }}
+              disabled={selectedAnswer !== null && answer !== selectedAnswer}
             >
               <span className="text-center w-full">{answer}</span>
               {selectedAnswer === flags[currentIndex].country &&
@@ -176,9 +174,10 @@ const QuizBody = () => {
             size="lg"
             onClick={() => {
               nextQuestion();
-              resetAnswer();
             }}
-            disabled={isNextButtonDisabled}
+            disabled={
+              selectedAnswer === null || currentIndex === flags.length - 1
+            }
             variant={"secondary"}
           >
             Next -&gt;
