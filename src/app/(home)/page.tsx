@@ -48,6 +48,8 @@ const StartPage = (props: StartPageProps) => {
 
 const QuizHeader = (props: any) => {
   const [timer, setTimer] = useState(10);
+  const { flagNo, totalNo } = props;
+
   useEffect(() => {
     const interval = setInterval(() => {
       setTimer((prev) => (prev === 0 ? prev : prev - 1));
@@ -64,11 +66,12 @@ const QuizHeader = (props: any) => {
     <div className="h-[67px]  overflow-hidden p-2 flex items-center border border-b-blue-100 justify-between px-7">
       <p className="capitalize font-semibold">name that world flag</p>
       <div className="flex items-center gap-3">
-        <span>Time&apos;s up!</span>
+        {timer === 0 && <span>Time&apos;s up!</span>}
+
         <div className="flex justify-center items-center  w-[50px] h-[50px]  rounded-full border-[2px] border-blue-100">
           {timer}
         </div>
-        <p>1 of 35</p>
+        <p>{`${flagNo + 1} of ${totalNo}`}</p>
         <p>Score : 0</p>
       </div>
     </div>
@@ -76,9 +79,8 @@ const QuizHeader = (props: any) => {
 };
 
 const QuizBody = (props: any) => {
-  const [selected,setSelected] = useState<string|null>(null);
+  const [selected, setSelected] = useState<string | null>(null);
   console.log(selected);
-  
 
   return (
     <div className="h-full  rounded-sm flex items-center justify-center flex-col gap-2">
@@ -95,25 +97,32 @@ const QuizBody = (props: any) => {
               className="w-[18rem] border-2 border-green-700 rounded-md relative"
               variant={"outline"}
               key={index}
-              onClick={()=>setSelected(option)}
+              onClick={() => setSelected(option)}
             >
               {option}
-              {option === selected && selected === props.flags[props.flagNo].name && <CircleCheck className="absolute right-2" color="green" /> }
-              {option === selected && selected !== props.flags[props.flagNo].name && <CircleX className="absolute right-2" color="red" />}
-              
+              {option === selected &&
+                selected === props.flags[props.flagNo].name && (
+                  <CircleCheck className="absolute right-2" color="green" />
+                )}
+              {option === selected &&
+                selected !== props.flags[props.flagNo].name && (
+                  <CircleX className="absolute right-2" color="red" />
+                )}
             </Button>
           )
         )}
       </div>
-
-      <Button
-        onClick={()=>{props.changeFlag();
-          setSelected(null)
-        }}
-        disabled={props.flagNo === props.flags.length - 1}
-      >
-        Next Image
-      </Button>
+      {selected && (
+        <Button
+          onClick={() => {
+            props.changeFlag();
+            setSelected(null);
+          }}
+          disabled={props.flagNo === props.flags.length - 1}
+        >
+          Next Image
+        </Button>
+      )}
     </div>
   );
 };
@@ -154,7 +163,7 @@ const HomePage = () => {
         <Card className="w-3/4 h-2/3 dark:bg-slate-800">
           {hasStarted ? (
             <>
-              <QuizHeader flagNo={flagNo} />
+              <QuizHeader flagNo={flagNo} totalNo={flags.length} />
               <QuizBody flags={flags} flagNo={flagNo} changeFlag={changeFlag} />
             </>
           ) : (
