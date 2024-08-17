@@ -2,14 +2,13 @@ import { flags } from "@/data/mocks";
 import { useQuizStore } from "@/hooks/quiz-state";
 import useTimer from "@/hooks/timer";
 import { timerClass } from "@/lib/styles";
-import { log } from "console";
 
 const Timer = () => {
   const { setSelectedAnswer, currentIndex } = useQuizStore();
   const { timeLeft, isTimeUp } = useTimer({
     onTimeUp: () => setSelectedAnswer(flags[currentIndex].country),
   });
-  console.log(timeLeft)
+
   return (
     <div className="flex items-center">
       {isTimeUp ? (
