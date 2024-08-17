@@ -5,10 +5,10 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { timerClass } from "@/lib/styles";
 import { useQuizStore } from "@/store/quiz-state";
-import { CircleCheck, CircleX } from "lucide-react";
+import { ArrowRight, CircleCheck, CircleX } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { interval, Subject, take } from "rxjs";
+import { useEffect, useRef, useState } from "react";
+import { Subject } from "rxjs";
 import NavBar from "./_components/navbar";
 
 const MAX_TIME = 5;
@@ -93,15 +93,36 @@ const QuizHeader = () => {
 const Timer = () => {
   const [timeLeft, setTimeLeft] = useState(MAX_TIME);
   const store = useQuizStore();
+  const intervalRef = useRef<any | null>(null);
+
   useEffect(() => {
-    const pulse$ = interval(1000)
-    const subscription = pulse$.pipe(take(6)).subscribe((time) => {
-      setTimeLeft(MAX_TIME - time)
-      if (time === MAX_TIME) intervelSubject.next(0);
-    })
-    
-    if(store.selectedAnswer) subscription.unsubscribe()
-    return () => subscription.unsubscribe();
+    const clearExistingInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+
+    if (store.selectedAnswer) {
+      clearExistingInterval();
+      return;
+    }
+
+    clearExistingInterval();
+    setTimeLeft(MAX_TIME);
+
+    intervalRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev === 0) {
+          intervelSubject.next(0);
+          return prev;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => {
+      clearExistingInterval();
+    };
   }, [store.currentIndex, store.selectedAnswer]);
 
   return (
@@ -122,67 +143,91 @@ const Timer = () => {
   );
 };
 
+const Img = (props: any) => {
+  const [x, setx] = useState(false);
+  useEffect(() => {
+    setx(true);
+  }, [props.src]);
+
+  return (
+    <Image
+      alt="flag"
+      src={props.src}
+      width="300"
+      height="250"
+      className={`rounded-sm w-[450px] h-[300px] ${
+        x
+          ? "animate-fade animate-duration-1000 animate-ease-in-out"
+          : "animate-fade animate-duration-1000 animate-ease-in-out"
+      }`}
+    />
+  );
+};
+
 const QuizBody = () => {
   const { currentIndex, nextQuestion, selectedAnswer, setSelectedAnswer } =
     useQuizStore();
 
   useEffect(() => {
-    const ob = intervelSubject.subscribe(n => {
-      setSelectedAnswer(flags[currentIndex].country)
-    })
-    return ()=> ob.unsubscribe()
-  },[currentIndex])
+    const ob = intervelSubject.subscribe(() => {
+      setSelectedAnswer(flags[currentIndex].country);
+    });
+    return () => ob.unsubscribe();
+  }, [currentIndex]);
 
   return (
     <div className="w-full h-full rounded-sm flex justify-center items-center">
-      <div className="flex flex-col gap-2">
-        <Image
-          alt="flag"
-          src={`/images/${flags[currentIndex].country}.svg`}
-          width="300"
-          height="250"
-          className="rounded-sm"
-        />
+      <div className="flex flex-col gap-2 w-full justify-center items-center">
+        <Img src={`/images/${flags[currentIndex].country}.svg`} />
+        <div className="w-full flex flex-col items-center justify-center relative h-[160px]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-[50%] absolute top-0">
+            {flags[currentIndex].answers.map((answer) => (
+              <Button
+                key={answer}
+                size="lg"
+                className="border border-green-700 capitalize px-2 relative"
+                variant="outline"
+                onClick={() => {
+                  setSelectedAnswer(answer);
+                }}
+                disabled={selectedAnswer !== null && answer !== selectedAnswer}
+              >
+                <span className="text-center w-full">{answer}</span>
+                {selectedAnswer === flags[currentIndex].country &&
+                  answer === selectedAnswer && (
+                    <CircleCheck
+                      className="absolute right-2 animate-fade animate-duration-500 animate-ease-in-out"
+                      color="green"
+                    />
+                  )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-          {flags[currentIndex].answers.map((answer) => (
+                {selectedAnswer !== flags[currentIndex].country &&
+                  answer === selectedAnswer && (
+                    <CircleX
+                      className="absolute right-2 animate-fade animate-duration-500 animate-ease-in-out"
+                      color="red"
+                    />
+                  )}
+              </Button>
+            ))}
+          </div>
+          {selectedAnswer && (
             <Button
-              key={answer}
               size="lg"
-              className="border border-green-700 capitalize px-2 relative"
               onClick={() => {
-                setSelectedAnswer(answer);
+                nextQuestion();
               }}
-              disabled={selectedAnswer !== null && answer !== selectedAnswer}
+              disabled={
+                selectedAnswer === null || currentIndex === flags.length - 1
+              }
+              variant={"secondary"}
+              className="w-[50%] absolute bottom-0 flex gap-2 items-center text-blue-800 font-bold animate-fade animate-duration-500 animate-ease-in-out"
             >
-              <span className="text-center w-full">{answer}</span>
-              {selectedAnswer === flags[currentIndex].country &&
-                answer === selectedAnswer && (
-                  <CircleCheck className="absolute right-2" color="green" />
-                )}
-
-              {selectedAnswer !== flags[currentIndex].country &&
-                answer === selectedAnswer && (
-                  <CircleX className="absolute right-2" color="red" />
-                )}
+              Next
+              <ArrowRight />
             </Button>
-          ))}
+          )}
         </div>
-
-        {selectedAnswer && (
-          <Button
-            size="lg"
-            onClick={() => {
-              nextQuestion();
-            }}
-            disabled={
-              selectedAnswer === null || currentIndex === flags.length - 1
-            }
-            variant={"secondary"}
-          >
-            Next -&gt;
-          </Button>
-        )}
       </div>
     </div>
   );
