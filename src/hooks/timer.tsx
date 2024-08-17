@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { MAX_TIME } from "@/configs/app.config";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useQuizStore } from "./quiz-state";
 
 const useTimer = ({ onTimeUp }: any) => {
@@ -27,7 +27,6 @@ const useTimer = ({ onTimeUp }: any) => {
       setTimeLeft((prev: number) => {
         if (prev === 0) {
           clearExistingInterval();
-          onTimeUp();
           return 0;
         }
         return prev - 1;
@@ -36,6 +35,12 @@ const useTimer = ({ onTimeUp }: any) => {
 
     return clearExistingInterval;
   }, [currentIndex, selectedAnswer]);
+
+  useLayoutEffect(() => {
+    if (timeLeft === 0) {
+      onTimeUp();
+    }
+  }, [timeLeft]);
 
   return {
     timeLeft,
