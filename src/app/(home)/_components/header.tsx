@@ -5,7 +5,7 @@ const QuizHeader = () => {
   const { currentIndex, maxIndex } = useQuizStore();
 
   return (
-    <div className="h-[67px] overflow-hidden p-2 flex items-center border-b border-b-blue-100 lg:border rounded-sm justify-between md:px-7">
+    <div className="h-[67px] p-2 flex items-center border-b border-b-blue-100 justify-between md:px-7">
       <p className="capitalize font-semibold hidden lg:block">
         name that world flag!
       </p>

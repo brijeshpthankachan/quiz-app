@@ -30,7 +30,7 @@ const NavBar = () => {
   // };
 
   return (
-    <div className="bg-gray-200 flex justify-between px-5 lg:px-16 dark:bg-slate-900 h-14 align-middle items-center absolute w-full">
+    <div className="bg-gray-200 flex justify-between px-5 lg:px-16 dark:bg-stone-900 h-[60px] align-middle items-center w-full">
       <div className="flex lg:pl-20 gap-4 items-center">
         <TreePalm size={28} color="#faf4f4" className="hidden dark:block" />
         <TreePalm size={28} color="#050505" className="dark:hidden" />

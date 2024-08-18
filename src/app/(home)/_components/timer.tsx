@@ -1,7 +1,7 @@
+import CircularProgressBar from "@/components/ui/radial-progress";
 import { flags } from "@/data/mocks";
 import { useQuizStore } from "@/hooks/quiz-state";
 import useTimer from "@/hooks/timer";
-import { timerClass } from "@/lib/styles";
 
 const Timer = () => {
   const { setSelectedAnswer, currentIndex } = useQuizStore();
@@ -11,18 +11,12 @@ const Timer = () => {
 
   return (
     <div className="flex items-center">
-      {isTimeUp ? (
-        <span className="bg-red-700 order-last lg:order-first w-[100px] text-center text-white px-2 rounded-xl text-sm lg:rounded-r-none -ml-3 lg:-mr-1 lg:ml-0 h-[20px] z-0 animate-fade-up duration-500">
+      {isTimeUp && (
+        <span className="w-[100px] h-[20px] px-2 text-sm text-white bg-red-700 rounded-xl lg:rounded-r-none order-last lg:order-first -ml-3 lg:-mr-1 lg:ml-0 z-0 animate-fade-up duration-500 text-center">
           Time&apos;s up!
         </span>
-      ) : null}
-      <div
-        className={`z-10 ${timerClass({
-          timer: isTimeUp ? "finished" : "running",
-        })}`}
-      >
-        {timeLeft}
-      </div>
+      )}
+      <CircularProgressBar progress={timeLeft} />
     </div>
   );
 };

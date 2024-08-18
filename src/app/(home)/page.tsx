@@ -17,10 +17,10 @@ const HomePage = () => {
   }, [setMaxIndex]);
 
   return (
-    <div className="h-full bg-gray-100 dark:bg-slate-700 w-full overflow-hidden rounded-sm">
+    <div className="w-full h-full">
       <NavBar />
-      <div className="flex justify-center lg:items-center pt-16 lg:pt-0 h-full bg-inherit dark:bg-slate-700 w-full ">
-        <Card className="lg:shadow-lg w-[100%] md:w-[90%] lg:w-3/4 h-2/3 bg-inherit border-none lg:border-2 border-gray-600 lg:dark:bg-slate-800">
+      <div className="flex justify-center h-[calc(100%-60px)] lg:items-center lg:pt-0 dark:bg-stone-700">
+        <Card className="flex flex-col w-full h-full bg-inherit border-none lg:border-2 lg:border-gray-600 lg:w-3/4 lg:h-2/3 md:w-[90%] lg:shadow-lg">
           {hasStarted ? (
             <>
               <QuizHeader />
