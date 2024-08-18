@@ -12,6 +12,10 @@ type QuizState = {
   points: number;
   correctAnswers: number;
   isTimerBonusEnabled: boolean;
+  shouldShowResults: boolean;
+  setShouldShowResults: (arg1: boolean) => void;
+  addPoints: (point: number) => void;
+  setCorrectAnswer: () => void;
 };
 
 export const useQuizStore = create<QuizState>((set) => ({
@@ -22,15 +26,19 @@ export const useQuizStore = create<QuizState>((set) => ({
   points: 0,
   correctAnswers: 0,
   isTimerBonusEnabled: false,
+  shouldShowResults: false,
 
   startQuiz: () => set({ hasStarted: true }),
-  setMaxIndex: (maxIndex: number) => set({ maxIndex: maxIndex }),
+  setMaxIndex: (maxIndex) => set({ maxIndex: maxIndex }),
+  setSelectedAnswer: (answer) => set({ selectedAnswer: answer }),
+  addPoints: (point) => set((state) => ({ points: state.points + point })),
+  setShouldShowResults: (arg1) => set({ shouldShowResults: arg1 }),
+  setCorrectAnswer: () =>
+    set((state) => ({ correctAnswers: state.correctAnswers + 1 })),
   nextQuestion: () =>
     set((state) => ({
       currentIndex: state.currentIndex + 1,
       isNextButtonDisabled: state.currentIndex === state.maxIndex - 2,
       selectedAnswer: null,
     })),
-  setSelectedAnswer: (answer: string) => set({ selectedAnswer: answer }),
-  setPoints: (point = 300) => set({ points: point }),
 }));

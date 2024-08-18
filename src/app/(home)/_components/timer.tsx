@@ -16,7 +16,12 @@ const Timer = () => {
           Time&apos;s up!
         </span>
       )}
-      <CircularProgressBar progress={timeLeft} />
+      <CircularProgressBar
+        progress={timeLeft}
+        width={55}
+        height={55}
+        stroke={6}
+      />
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import { Child } from "@/types/global";
 import type { Metadata } from "next";
+import { useTheme } from "next-themes";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<Child>) {
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>{children}</body>
