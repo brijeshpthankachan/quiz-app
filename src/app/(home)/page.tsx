@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import QuizBody from "./_components/body";
 import QuizHeader from "./_components/header";
 import NavBar from "./_components/navbar";
-import StartPage from "./_components/start";
+import ScoreBoard from "./_components/score-board";
 
 const HomePage = () => {
   const { hasStarted, setMaxIndex } = useQuizStore();
@@ -27,7 +27,8 @@ const HomePage = () => {
               <QuizBody />
             </>
           ) : (
-            <StartPage />
+            // <StartPage />
+            <ScoreBoard />
           )}
         </Card>
       </div>

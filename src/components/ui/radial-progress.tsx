@@ -6,7 +6,7 @@ const CircularProgressBar = ({ progress }: { progress: number }) => {
   const circumference = 2 * Math.PI * radius;
   const progressPercentage = (progress / MAX_TIME) * 100;
   const offset = circumference - (progressPercentage / 100) * circumference;
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   return (
     <div className="relative w-[60px] h-[60px] flex justify-center items-center z-10">
@@ -32,7 +32,7 @@ const CircularProgressBar = ({ progress }: { progress: number }) => {
           strokeWidth="4"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          fill={theme === THEME.LIGHT ? "white" : "#57534e"}
+          fill={resolvedTheme === THEME.LIGHT ? "white" : "#57534e"}
           className="transition-all duration-500 ease-in-out"
         />
       </svg>

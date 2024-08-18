@@ -9,7 +9,7 @@ const QuizBody = () => {
     useQuizStore();
 
   return (
-    <div className="flex flex-col items-center w-full px-4 gap-2 lg:justify-center flex-1">
+    <div className="flex flex-col items-center w-full px-4 gap-2 pt-16 flex-1">
       <Image
         alt="flag"
         src={`/images/${flags[currentIndex].country}.svg`}
