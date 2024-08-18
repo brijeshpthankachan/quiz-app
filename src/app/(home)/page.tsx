@@ -3,11 +3,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import NavBar from "./_components/navbar";
 import Image from "next/image";
 import { CircleCheck, CircleX } from "lucide-react";
-import { log } from "console";
 
 type StartPageProps = {
   onQuizStart: Dispatch<SetStateAction<boolean>>;
@@ -49,19 +48,27 @@ const StartPage = (props: StartPageProps) => {
 const QuizHeader = (props: any) => {
   const [timer, setTimer] = useState(10);
   const { flagNo, totalNo } = props;
+  const intervalRef = useRef<any | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    if (Boolean(props.selected && intervalRef.current)) {
+      clearInterval(intervalRef.current);
+      return;
+    }
+
+    intervalRef.current = setInterval(() => {
       setTimer((prev) => (prev === 0 ? prev : prev - 1));
     }, 1000);
+
     return () => {
-      clearInterval(interval);
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, []);
+  }, [props.selected]);
 
   useEffect(() => {
     setTimer(10);
   }, [props.flagNo]);
+
   return (
     <div className="h-[67px]  overflow-hidden p-2 flex items-center border border-b-blue-100 justify-between px-7">
       <p className="capitalize font-semibold">name that world flag</p>
@@ -79,9 +86,6 @@ const QuizHeader = (props: any) => {
 };
 
 const QuizBody = (props: any) => {
-  const [selected, setSelected] = useState<string | null>(null);
-  console.log(selected);
-
   return (
     <div className="h-full  rounded-sm flex items-center justify-center flex-col gap-2">
       <Image
@@ -94,29 +98,35 @@ const QuizBody = (props: any) => {
         {props.flags[props.flagNo].options.map(
           (option: string, index: number) => (
             <Button
-              className="w-[18rem] border-2 border-green-700 rounded-md relative"
+              className={`w-[18rem] border-2 rounded-md relative ${
+                option === props.selected
+                  ? props.selected === props.flags[props.flagNo].name
+                    ? "border-green-700"
+                    : ""
+                  : "border-blue-300 hover:border-blue-700"
+              } `}
               variant={"outline"}
               key={index}
-              onClick={() => setSelected(option)}
+              onClick={() => props.setSelected(option)}
             >
               {option}
-              {option === selected &&
-                selected === props.flags[props.flagNo].name && (
+              {option === props.selected &&
+                props.selected === props.flags[props.flagNo].name && (
                   <CircleCheck className="absolute right-2" color="green" />
                 )}
-              {option === selected &&
-                selected !== props.flags[props.flagNo].name && (
+              {option === props.selected &&
+                props.selected !== props.flags[props.flagNo].name && (
                   <CircleX className="absolute right-2" color="red" />
                 )}
             </Button>
           )
         )}
       </div>
-      {selected && (
+      {props.selected && (
         <Button
           onClick={() => {
             props.changeFlag();
-            setSelected(null);
+            props.setSelected(null);
           }}
           disabled={props.flagNo === props.flags.length - 1}
         >
@@ -129,6 +139,7 @@ const QuizBody = (props: any) => {
 
 const HomePage = () => {
   const [hasStarted, setHasStarted] = useState(false);
+  const [selected, setSelected] = useState<string | null>(null);
   const flags: Array<{ name: string; options: Array<string> }> = [
     {
       name: "afghanistan",
@@ -163,8 +174,18 @@ const HomePage = () => {
         <Card className="w-3/4 h-2/3 dark:bg-slate-800">
           {hasStarted ? (
             <>
-              <QuizHeader flagNo={flagNo} totalNo={flags.length} />
-              <QuizBody flags={flags} flagNo={flagNo} changeFlag={changeFlag} />
+              <QuizHeader
+                flagNo={flagNo}
+                totalNo={flags.length}
+                selected={selected}
+              />
+              <QuizBody
+                flags={flags}
+                flagNo={flagNo}
+                changeFlag={changeFlag}
+                selected={selected}
+                setSelected={setSelected}
+              />
             </>
           ) : (
             <StartPage onQuizStart={setHasStarted} />
