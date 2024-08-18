@@ -9,13 +9,13 @@ const QuizBody = () => {
     useQuizStore();
 
   return (
-    <div className="flex flex-col items-center w-full px-4 pt-8 gap-2 lg:justify-center flex-1">
+    <div className="flex flex-col items-center w-full px-4 gap-2 lg:justify-center flex-1">
       <Image
         alt="flag"
         src={`/images/${flags[currentIndex].country}.svg`}
         width="300"
         height="250"
-        className="w-auto h-auto lg:w-[450px] lg:h-[300px] rounded-sm"
+        className="w-auto h-auto lg:w-[400px] lg:h-[250px] rounded-sm"
       />
       <div className="grid grid-cols-1 gap-2 w-full pt-10 md:grid-cols-2 lg:w-[50%]">
         {flags[currentIndex].answers.map((answer) => (
